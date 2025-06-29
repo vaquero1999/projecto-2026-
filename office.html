@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Portal | Valley Sanitation</title>
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #FF0000;
+            --text: #FFFFFF;
+            --highlight: #FF5A5F;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: var(--text);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logout-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            background-color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .nav-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .nav-item.active {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 10px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+        
+        .status-complete {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        /* Chatbot styles (same as index.html) */
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            overflow: hidden;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .chatbot-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .chatbot-messages {
+            height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+        
+        .chatbot-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .chatbot-send {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Office Dashboard</div>
+        <div class="user-info">
+            <span>Welcome, Manager</span>
+            <button class="logout-btn">Logout</button>
+        </div>
+    </header>
+    
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="nav-item active">Dashboard</div>
+            <div class="nav-item">Dispatch</div>
+            <div class="nav-item">Inventory</div>
+            <div class="nav-item">Customers</div>
+            <div class="nav-item">Reports</div>
+            <div class="nav-item">Settings</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>Today's Jobs</div>
+                    <div class="stat-value">18</div>
+                    <div>3 remaining</div>
+                </div>
+                <div class="stat-card">
+                    <div>Units Available</div>
+                    <div class="stat-value">42</div>
+                    <div>7 in service</div>
+                </div>
+                <div class="stat-card">
+                    <div>New Customers</div>
+                    <div class="stat-value">5</div>
+                    <div>This week</div>
+                </div>
+                <div class="stat-card">
+                    <div>Service Alerts</div>
+                    <div class="stat-value">3</div>
+                    <div>Needing attention</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Today's Schedule</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Job #</th>
+                            <th>Customer</th>
+                            <th>Location</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>VS-1024</td>
+                            <td>Acme Construction</td>
+                            <td>123 Main St</td>
+                            <td>8:00 AM</td>
+                            <td><span class="status-badge status-complete">Complete</span></td>
+                            <td><button class="btn btn-primary">Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>VS-1025</td>
+                            <td>City Parks Dept</td>
+                            <td>Riverside Park</td>
+                            <td>10:30 AM</td>
+                            <td><span class="status-badge status-complete">Complete</span></td>
+                            <td><button class="btn btn-primary">Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>VS-1026</td>
+                            <td>Smith Residence</td>
+                            <td>456 Oak Ave</td>
+                            <td>1:00 PM</td>
+                            <td><span class="status-badge status-pending">In Progress</span></td>
+                            <td><button class="btn btn-primary">Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>VS-1027</td>
+                            <td>Jones Wedding</td>
+                            <td>789 Pine Rd</td>
+                            <td>3:30 PM</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><button class="btn btn-primary">Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chatbot" id="chatbot">
+        <div class="chatbot-header" id="chatbotHeader">
+            <span>Juan Navarro (Office Assistant)</span>
+            <button class="chatbot-close">×</button>
+        </div>
+        <div class="chatbot-messages" id="chatMessages">
+            <p>Hello! How can I help with office tasks today?</p>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="userInput" placeholder="Type your question...">
+            <button class="chatbot-send" id="sendBtn">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        // Chatbot functionality (same as index.html)
+        const chatbot = document.getElementById('chatbot');
+        const chatHeader = document.getElementById('chatbotHeader');
+        const closeBtn = document.querySelector('.chatbot-close');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        // Make chatbot draggable
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        
+        chatHeader.onmousedown = dragMouseDown;
+        
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        }
+        
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            chatbot.style.top = (chatbot.offsetTop - pos2) + "px";
+            chatbot.style.left = (chatbot.offsetLeft - pos1) + "px";
+        }
+        
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+        
+        // Close chatbot
+        closeBtn.addEventListener('click', function() {
+            chatbot.style.display = 'none';
+        });
+        
+        // Chatbot responses
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage('You: ' + message, 'user');
+                userInput.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const response = getAIResponse(message);
+                    addMessage('Juan: ' + response, 'bot');
+                }, 500);
+            }
+        }
+        
+        function addMessage(text, sender) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = text;
+            if (sender === 'user') {
+                messageElement.style.color = 'var(--secondary)';
+                messageElement.style.fontWeight = 'bold';
+            }
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function getAIResponse(message) {
+            const lowerMsg = message.toLowerCase();
+            
+            if (lowerMsg.includes('delivery') || lowerMsg.includes('schedule')) {
+                return "The next available delivery slot is tomorrow at 1 PM. Would you like to book it?";
+            } else if (lowerMsg.includes('customer') || lowerMsg.includes('client')) {
+                return "You have 3 new customer requests today. Check the Customers tab for details.";
+            } else if (lowerMsg.includes('inventory') || lowerMsg.includes('stock')) {
+                return "Current inventory: 15 standard units ready, 8 deluxe units, 5 needing service.";
+            } else if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) {
+                return "Hello! How can I help with office tasks today?";
+            } else {
+                return "I'm focused on office operations. Ask me about scheduling, customers, or inventory.";
+            }
+        }
+        
+        // Logout button
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                // In full implementation, this would load different content
+                alert('Loading ' + this.textContent + ' section...');
+            });
+        });
+    </script>
+</body>
+</html>
